@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contract Comparator — Ironclad × Zycus</title>
+  <!-- Mode state is managed by app.js; body gets data-mode="pre" or data-mode="post" -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="light">
+  <!-- Animated background grid -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="app-shell">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-mark">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lgL" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#60a5fa"/>
+              <stop offset="100%" stop-color="#3b82f6"/>
+            </linearGradient>
+            <linearGradient id="lgR" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#a78bfa"/>
+              <stop offset="100%" stop-color="#7c3aed"/>
+            </linearGradient>
+          </defs>
+          <!-- Left document -->
+          <rect x="2" y="6" width="16" height="22" rx="2.5" fill="url(#lgL)"/>
+          <line x1="6" y1="12" x2="14" y2="12" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+          <line x1="6" y1="16" x2="14" y2="16" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <line x1="6" y1="20" x2="11" y2="20" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+          <!-- Right document -->
+          <rect x="26" y="16" width="16" height="22" rx="2.5" fill="url(#lgR)"/>
+          <line x1="30" y1="22" x2="38" y2="22" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+          <line x1="30" y1="26" x2="38" y2="26" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <line x1="30" y1="30" x2="35" y2="30" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+          <!-- Compare arrows -->
+          <path d="M20 19 L24 17 L24 21 Z" fill="#a78bfa"/>
+          <path d="M24 25 L20 27 L20 23 Z" fill="#60a5fa"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>Contract Comparator</h1>
+        <span class="header-sub" id="header-sub">Ironclad × Zycus — Intelligent Field Matching Engine</span>
+      </div>
+      <div class="header-badge" id="header-badge">
+        <span class="pulse-dot" id="badge-dot"></span>
+        <span id="badge-label">Ready</span>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode">
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M13 10.5a5.5 5.5 0 01-7.5-7.5A5.5 5.5 0 1013 10.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:none">
+          <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.42 1.42M11.53 11.53l1.42 1.42M3.05 12.95l1.42-1.42M11.53 4.47l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Mode Selector -->
+    <div class="mode-selector" id="mode-selector">
+      <button class="mode-btn active" id="btn-mode-pre" data-mode="pre">
+        <div class="mode-btn-icon pre-icon">
+          <!-- Filter funnel — "pre-validation / data filtering" -->
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 5h14l-5 6v5l-4-2V11L3 5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="mode-btn-text">
+          <span class="mode-btn-title">Pre-Validation</span>
+          <span class="mode-desc">Zycus only — data quality checks before upload</span>
+        </div>
+      </button>
+      <button class="mode-btn" id="btn-mode-post" data-mode="post">
+        <div class="mode-btn-icon post-icon">
+          <!-- Bar chart / analytics — "post-validation / results analysis" -->
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="11" width="3" height="6" rx="0.75" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <rect x="8.5" y="7" width="3" height="10" rx="0.75" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <rect x="14" y="4" width="3" height="13" rx="0.75" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <line x1="2" y1="17" x2="18" y2="17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="mode-btn-text">
+          <span class="mode-btn-title">Post-Validation</span>
+          <span class="mode-desc">Ironclad + Zycus — field-by-field comparison</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- Upload Zone -->
+    <section class="upload-section">
+      <div class="upload-grid" id="upload-grid">
+
+        <!-- Zone 1: Ironclad (post-mode only) -->
+        <div class="drop-zone" id="drop-ironclad" data-target="ironclad">
+          <div class="drop-zone-glow drop-zone-glow-blue"></div>
+          <div class="drop-icon ironclad-icon">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+              <rect x="4" y="4" width="36" height="36" rx="8" fill="rgba(59,130,246,0.12)" stroke="#3b82f6" stroke-width="1.5"/>
+              <path d="M12 14h20v3H12zM12 21h14v3H12zM12 28h16v3H12z" fill="#3b82f6" opacity="0.85"/>
+            </svg>
+          </div>
+          <div class="drop-label">
+            <strong>Ironclad Export</strong>
+            <span>Workflow export .xlsx / .csv<br>Drop file or click to browse</span>
+          </div>
+          <input type="file" id="file-ironclad" accept=".xlsx,.xls,.csv" hidden />
+          <div class="file-status" id="status-ironclad">No file selected</div>
+        </div>
+
+        <div class="vs-divider" id="vs-divider-1">
+          <span>+</span>
+        </div>
+
+        <!-- Zone 1b: Power BI ID Map (post-mode only) -->
+        <div class="drop-zone" id="drop-powerbi" data-target="powerbi">
+          <div class="drop-zone-glow drop-zone-glow-amber"></div>
+          <div class="drop-icon powerbi-icon">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+              <rect x="4" y="4" width="36" height="36" rx="8" fill="rgba(234,179,8,0.12)" stroke="#eab308" stroke-width="1.5"/>
+              <rect x="10" y="24" width="5" height="10" rx="1" fill="#eab308" opacity="0.85"/>
+              <rect x="19" y="17" width="5" height="17" rx="1" fill="#eab308" opacity="0.85"/>
+              <rect x="28" y="11" width="5" height="23" rx="1" fill="#eab308" opacity="0.85"/>
+            </svg>
+          </div>
+          <div class="drop-label">
+            <strong>Power BI Export</strong>
+            <span>ID map .xlsx / .csv<br>Provides long IDs for matching</span>
+          </div>
+          <input type="file" id="file-powerbi" accept=".xlsx,.xls,.csv" hidden />
+          <div class="file-status" id="status-powerbi">No file selected</div>
+        </div>
+
+        <div class="vs-divider" id="vs-divider-2">
+          <span>VS</span>
+        </div>
+
+        <!-- Zone 2: Zycus -->
+        <div class="drop-zone" id="drop-zycus" data-target="zycus">
+          <div class="drop-zone-glow drop-zone-glow-purple"></div>
+          <div class="drop-icon zycus-icon">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+              <rect x="4" y="4" width="36" height="36" rx="8" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1.5"/>
+              <path d="M10 32l8-14 6 9 5-7 7 12H10z" fill="#7c3aed" opacity="0.85"/>
+            </svg>
+          </div>
+          <div class="drop-label">
+            <strong>Zycus Export</strong>
+            <span>Contract data .xlsx / .csv<br>Drop file or click to browse</span>
+          </div>
+          <input type="file" id="file-zycus" accept=".xlsx,.xls,.csv" hidden />
+          <div class="file-status" id="status-zycus">No file selected</div>
+        </div>
+
+      </div>
+
+      <!-- Action bar -->
+      <div class="action-bar">
+        <button class="btn-primary" id="btn-compare" disabled>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 9h6M9 6l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span id="btn-compare-label">Run Comparison</span>
+        </button>
+        <button class="btn-secondary" id="btn-download" disabled>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 3v9M5 8l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M3 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Download Report
+        </button>
+        <button class="btn-clear" id="btn-clear">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Clear
+        </button>
+      </div>
+    </section>
+
+    <!-- Progress -->
+    <div class="progress-wrap" id="progress-wrap" style="display:none">
+      <div class="progress-label" id="progress-label">Initializing…</div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <!-- Stats strip (post-validation) -->
+    <div class="stats-strip" id="stats-strip" style="display:none">
+      <div class="stat-card">
+        <span class="stat-val" id="stat-matched">—</span>
+        <span class="stat-key">Matched Contracts</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" id="stat-ironclad-only">—</span>
+        <span class="stat-key">Ironclad Only</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" id="stat-avg-score">—</span>
+        <span class="stat-key">Avg Match Score</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" id="stat-missing-cols">—</span>
+        <span class="stat-key">Missing Columns</span>
+      </div>
+    </div>
+
+    <!-- Stats strip (pre-validation) -->
+    <div class="stats-strip pre-stats-strip" id="pre-stats-strip" style="display:none">
+      <div class="stat-card">
+        <span class="stat-val" id="pre-stat-total">—</span>
+        <span class="stat-key">Total Records</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val stat-val-green" id="pre-stat-pass">—</span>
+        <span class="stat-key">Pass</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val warn" id="pre-stat-fail">—</span>
+        <span class="stat-key">Fail</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" id="pre-stat-issues">—</span>
+        <span class="stat-key">Total Issues</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val" id="pre-stat-fields">—</span>
+        <span class="stat-key">Fields Checked</span>
+      </div>
+    </div>
+
+    <!-- Post-Validation Results -->
+    <section class="results-section" id="results-section" style="display:none">
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab active" data-tab="summary">Summary</button>
+        <button class="tab" data-tab="comparison">Field Scores</button>
+        <button class="tab" data-tab="mismatches">Mismatches</button>
+        <button class="tab" data-tab="missing">Missing Columns</button>
+        <button class="tab" data-tab="record-type" style="display:none">Record Type Breakdown</button>
+      </div>
+
+      <!-- Summary tab -->
+      <div class="tab-pane active" id="tab-summary">
+        <div class="section-title">Match Score by Field <span class="chip">Ironclad / Zycus</span></div>
+        <div class="score-table-wrap">
+          <table class="score-table" id="score-table">
+            <thead>
+              <tr>
+                <th>Attribute Name</th>
+                <th>Ironclad Column</th>
+                <th>Zycus Column</th>
+                <th style="width:140px">Match Score</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="score-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Comparison tab -->
+      <div class="tab-pane" id="tab-comparison">
+        <div class="section-title">Side-by-Side Field Values <span class="chip" id="comparison-count"></span></div>
+        <div class="filter-bar">
+          <input class="search-input" id="comparison-search" placeholder="Filter by Contract ID…" />
+          <select class="select-input" id="comparison-field-filter">
+            <option value="">All Fields</option>
+          </select>
+        </div>
+        <div class="comparison-table-wrap">
+          <table class="comparison-table" id="comparison-table">
+            <thead id="comparison-thead"></thead>
+            <tbody id="comparison-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Mismatches tab -->
+      <div class="tab-pane" id="tab-mismatches">
+        <div class="section-title">Detailed Mismatches <span class="chip" id="mismatch-count"></span></div>
+        <div class="filter-bar">
+          <input class="search-input" id="mismatch-search" placeholder="Search contract ID or value…" />
+          <select class="select-input" id="mismatch-field-filter">
+            <option value="">All Fields</option>
+          </select>
+        </div>
+        <div class="mismatch-table-wrap">
+          <table class="mismatch-table" id="mismatch-table">
+            <thead>
+              <tr>
+                <th>Contract ID</th>
+                <th>HNK Number</th>
+                <th>Field (Ironclad)</th>
+                <th>Field (Zycus)</th>
+                <th>Ironclad Value</th>
+                <th>Zycus Value</th>
+              </tr>
+            </thead>
+            <tbody id="mismatch-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Missing columns tab -->
+      <div class="tab-pane" id="tab-missing">
+        <div class="section-title">Column Availability Report</div>
+        <div id="missing-cols-content"></div>
+      </div>
+
+      <!-- Record Type Breakdown tab -->
+      <div class="tab-pane" id="tab-record-type" style="display:none">
+        <div class="section-title">Record Type Breakdown <span class="chip" id="record-type-chip"></span></div>
+        <div class="score-table-wrap" style="max-width:420px">
+          <table class="score-table" id="record-type-table">
+            <thead>
+              <tr>
+                <th>Record Type</th>
+                <th style="text-align:right;width:100px">Count</th>
+              </tr>
+            </thead>
+            <tbody id="record-type-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pre-Validation Results -->
+    <section class="results-section" id="pre-results-section" style="display:none">
+      <div class="tab-bar" id="pre-tab-bar">
+        <button class="tab active" data-pretab="pre-summary">Summary</button>
+        <button class="tab" data-pretab="pre-issues">All Issues</button>
+        <button class="tab" data-pretab="pre-by-field">By Field</button>
+      </div>
+
+      <!-- Pre-val Summary tab -->
+      <div class="tab-pane active" id="tab-pre-summary">
+        <div class="section-title">Validation Check Overview <span class="chip" id="pre-summary-chip"></span></div>
+        <div class="score-table-wrap">
+          <table class="score-table" id="pre-summary-table">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Zycus Column</th>
+                <th>Rule</th>
+                <th style="width:100px">Issues</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="pre-summary-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pre-val All Issues tab -->
+      <div class="tab-pane" id="tab-pre-issues">
+        <div class="section-title">All Validation Issues <span class="chip" id="pre-issues-chip"></span></div>
+        <div class="filter-bar">
+          <input class="search-input" id="pre-issues-search" placeholder="Search contract ID or value…" />
+          <select class="select-input" id="pre-issues-field-filter">
+            <option value="">All Fields</option>
+          </select>
+        </div>
+        <div class="mismatch-table-wrap">
+          <table class="mismatch-table" id="pre-issues-table">
+            <thead>
+              <tr>
+                <th>Row #</th>
+                <th>Contract ID</th>
+                <th>Field</th>
+                <th>Value Found</th>
+                <th>Rule</th>
+                <th>Severity</th>
+              </tr>
+            </thead>
+            <tbody id="pre-issues-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pre-val By Field tab -->
+      <div class="tab-pane" id="tab-pre-by-field">
+        <div class="section-title">Issues Grouped by Field</div>
+        <div id="pre-by-field-content"></div>
+      </div>
+    </section>
+
+    <!-- Log console -->
+    <div class="log-panel" id="log-panel">
+      <div class="log-header">
+        <span>Engine Log</span>
+        <button class="log-clear" id="log-clear">Clear</button>
+      </div>
+      <div class="log-body" id="log-body"></div>
+    </div>
+
+    <footer class="app-footer">
+      Contract Comparator v3.1 — Client-side only. No data leaves your browser.
+      <span class="footer-sep">|</span>
+      © 2026 <a href="mailto:sanjana.s4@ibm.com" class="footer-link">sanjana.s4@ibm.com</a>
+    </footer>
+  </div>
+
+  <!-- CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
